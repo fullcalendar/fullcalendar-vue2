@@ -69,6 +69,7 @@ You can even supply [named-slot](https://v2.vuejs.org/v2/guide/components-slots.
 
 - [Documentation](https://fullcalendar.io/docs/vue)
 - [Example Project](https://github.com/fullcalendar/fullcalendar-examples/tree/main/vue2)
+- [Issue Tracker](https://github.com/fullcalendar/fullcalendar/issues)
 
 ## Development
 
