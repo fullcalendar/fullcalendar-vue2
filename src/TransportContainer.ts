@@ -22,6 +22,10 @@ const TransportContainer = Vue.extend({
 
   mounted() {
     replaceEl(this.$el, this.inPlaceOf)
+
+    // insurance for if Preact recreates and reroots inPlaceOf element
+    ;(this.inPlaceOf as HTMLElement).style.display = 'none'
+
     this.reportEl(this.$el)
   },
 
@@ -37,7 +41,11 @@ const TransportContainer = Vue.extend({
   },
 
   beforeDestroy() {
-    dummyContainer.removeChild(this.inPlaceOf)
+    // protect against Preact recreating and rerooting inPlaceOf element
+    if (this.inPlaceOf.parentNode === dummyContainer) {
+      dummyContainer.removeChild(this.inPlaceOf)
+    }
+
     this.reportEl(null)
   }
 })

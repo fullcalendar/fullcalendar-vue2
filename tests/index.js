@@ -2,6 +2,7 @@ import { mount as _mount } from '@vue/test-utils'
 import FullCalendar from '../dist/index.js'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
+import resourceTimelinePlugin from '@fullcalendar/resource-timeline'
 import Vue from 'vue'
 
 
@@ -603,6 +604,45 @@ it('slot rendering reacts to bound parent state', async () => {
   eventEl = getRenderedEventEls(wrapper).at(0)
   expect(eventEl.findAll('b').length).toEqual(1)
   expect(eventEl.findAll('i').length).toEqual(0)
+})
+
+
+// https://github.com/fullcalendar/fullcalendar/issues/7105 (but for vue2)
+describe('with resource-timeline view', () => {
+  it('doesn\'t throw any errors when removing a resource', async () => {
+    let wrapper = mount({
+      components: {
+        FullCalendar,
+      },
+      template: `
+        <FullCalendar ref='calendar' :options='calendarOptions'>
+          <template v-slot:resourceLabelContent="arg">
+            <b>{{ arg.resource.title }}</b>
+          </template>
+        </FullCalendar>
+      `,
+      data() {
+        return {
+          calendarOptions: {
+            plugins: [resourceTimelinePlugin],
+            initialView: 'resourceTimelineWeek',
+            resources: [{ id: 'a', title: 'a' }]
+          }
+        }
+      },
+      methods: {
+        removeResource() {
+          const calendarApi = this.$refs.calendar.getApi()
+          const resource = calendarApi.getResourceById('a')
+          resource.remove()
+        }
+      }
+    })
+
+    await Vue.nextTick()
+    wrapper.vm.removeResource() // TODO: have test fail if any error is thrown
+    await Vue.nextTick()
+  })
 })
 
 
