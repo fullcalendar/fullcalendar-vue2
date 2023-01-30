@@ -36,6 +36,10 @@ const FullCalendar = Vue.extend({
     const customRenderingNodes: VNode[] = []
 
     for (const customRendering of this.customRenderingMap.values()) {
+      const innerContent = typeof customRendering.generatorMeta === 'function' ?
+        customRendering.generatorMeta(customRendering.renderProps) : // a slot-render-function
+        customRendering.generatorMeta // jsx vnode?
+
       customRenderingNodes.push(
         // need stable element reference for list-diffing
         // TODO: move this functionality within TransportContainer
@@ -50,9 +54,7 @@ const FullCalendar = Vue.extend({
               elStyle: customRendering.elStyle,
               elAttrs: customRendering.elAttrs,
             }
-          }, customRendering.generatorMeta( // a slot-render-function
-            customRendering.renderProps
-          ))
+          }, innerContent)
         ])
       )
     }
