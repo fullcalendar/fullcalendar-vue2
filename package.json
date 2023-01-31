@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/vue",
-  "version": "6.1.1",
+  "version": "6.1.2",
   "title": "FullCalendar Vue 2 Component",
   "description": "The official Vue 2 component for FullCalendar",
   "keywords": [
@@ -84,5 +84,6 @@
   "files": [
     "dist",
     "src"
-  ]
+  ],
+  "sideEffects": false
 }
