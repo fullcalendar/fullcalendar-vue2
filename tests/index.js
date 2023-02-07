@@ -95,6 +95,59 @@ it('renders events with Date objects', async () => { // necessary to test copy u
   expect(getRenderedEventCount(wrapper)).toBe(2)
 })
 
+// https://github.com/fullcalendar/fullcalendar/issues/7191
+// (could not recreate. this was likely fixed prior)
+it('renders events and emits current element in eventDidMount', (done) => {
+  let eventsSetCalled = false
+  let eventEl
+
+  const App = {
+    data() {
+      return {
+        calendarOptions: {
+          ...DEFAULT_OPTIONS,
+          editable: true,
+          selectable: true,
+          selectMirror: true,
+          dayMaxEvents: true,
+          weekends: true,
+          initialEvents: [
+            { title: 'event', start: new Date(DEFAULT_OPTIONS.initialDate), allDay: false },
+          ],
+          eventDidMount: this.handleEventDidMount,
+          eventsSet: this.handleEvents
+        },
+        currentEvents: [],
+      }
+    },
+    methods: {
+      handleEventDidMount(arg) {
+        eventEl = arg.el
+      },
+      handleEvents(events) {
+        eventsSetCalled = true
+        this.currentEvents = events
+      }
+    },
+    render(createElement) {
+      return createElement(FullCalendar, {
+        props: {
+          options: this.calendarOptions
+        }
+      })
+    }
+  }
+
+  mount(App)
+  expect(eventsSetCalled).toBe(true)
+  expect(eventEl.offsetWidth).toBeGreaterThan(0) // in the DOM?
+
+  setTimeout(() => {
+    expect(eventEl.offsetWidth).toBeGreaterThan(0) // in the DOM?
+    done()
+  }, 100)
+})
+
 it('handles multiple prop changes, include event reset', (done) => {
   let viewMountCnt = 0
   let eventRenderCnt = 0
