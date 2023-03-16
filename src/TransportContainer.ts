@@ -1,6 +1,6 @@
 import Vue from 'vue'
 
-const dummyContainer = document.createDocumentFragment()
+const dummyContainer = typeof document !== 'undefined' ? document.createDocumentFragment() : null
 
 const TransportContainer = Vue.extend({
   props: {
@@ -34,7 +34,7 @@ const TransportContainer = Vue.extend({
     If the ContentContainer's tagName changed, it will create a new DOM element in its
     original place. Detect this and re-replace.
     */
-    if (this.inPlaceOf.parentNode !== dummyContainer) {
+    if (dummyContainer && this.inPlaceOf.parentNode !== dummyContainer) {
       replaceEl(this.$el, this.inPlaceOf)
       this.reportEl(this.$el)
     }
@@ -42,7 +42,7 @@ const TransportContainer = Vue.extend({
 
   beforeDestroy() {
     // protect against Preact recreating and rerooting inPlaceOf element
-    if (this.inPlaceOf.parentNode === dummyContainer) {
+    if (dummyContainer && this.inPlaceOf.parentNode === dummyContainer) {
       dummyContainer.removeChild(this.inPlaceOf)
     }
 
@@ -54,5 +54,8 @@ export default TransportContainer
 
 function replaceEl(subject: Element, inPlaceOf: Element): void {
   inPlaceOf.parentNode?.insertBefore(subject, inPlaceOf.nextSibling)
-  dummyContainer.appendChild(inPlaceOf)
+
+  if (dummyContainer) {
+    dummyContainer.appendChild(inPlaceOf)
+  }
 }

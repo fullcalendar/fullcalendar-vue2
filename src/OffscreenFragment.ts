@@ -1,6 +1,6 @@
 import Vue from 'vue'
 
-const dummyContainer = document.createDocumentFragment()
+const dummyContainer = typeof document !== 'undefined' ? document.createDocumentFragment() : null
 
 const OffscreenFragment = Vue.extend({
   render(h) {
@@ -14,11 +14,15 @@ const OffscreenFragment = Vue.extend({
   },
 
   mounted() {
-    dummyContainer.appendChild(this.$el)
+    if (dummyContainer) {
+      dummyContainer.appendChild(this.$el)
+    }
   },
 
   beforeDestroy() {
-    dummyContainer.removeChild(this.$el)
+    if (dummyContainer) {
+      dummyContainer.removeChild(this.$el)
+    }
   }
 })
 
