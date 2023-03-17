@@ -25,7 +25,7 @@ const FullCalendar = Vue.extend({
     buildOptions(suppliedOptions: CalendarOptions | undefined): CalendarOptions {
       return {
         ...suppliedOptions,
-        customRenderingMetaMap: this.$scopedSlots,
+        customRenderingMetaMap: kebabToCamelKeys(this.$scopedSlots),
         handleCustomRendering: getSecret(this).handleCustomRendering,
         customRenderingReplacesEl: true,
       }
@@ -163,4 +163,27 @@ function buildWatchers() {
   }
 
   return watchers
+}
+
+// General Utils
+
+function kebabToCamelKeys<V>(map: { [key: string]: V }): { [key: string]: V } {
+  const newMap: { [key: string]: V } = {}
+
+  for (const key in map) {
+    newMap[kebabToCamel(key)] = map[key]
+  }
+
+  return newMap
+}
+
+function kebabToCamel(s: string): string {
+  return s
+    .split('-')
+    .map((word, index) => index ? capitalize(word) : word)
+    .join('')
+}
+
+function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1)
 }
