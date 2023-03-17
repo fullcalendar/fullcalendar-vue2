@@ -4,7 +4,7 @@ const dummyContainer = typeof document !== 'undefined' ? document.createDocument
 
 const TransportContainer = Vue.extend({
   props: {
-    inPlaceOf: Object, // would use Element but doesn't work with SSR
+    inPlaceOf: typeof Element !== 'undefined' ? Element : Object,
     reportEl: Function, // TODO: better type
     elTag: String,
     elClasses: Array,
