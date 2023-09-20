@@ -98,7 +98,8 @@ it('renders events with Date objects', async () => { // necessary to test copy u
 // https://github.com/fullcalendar/fullcalendar/issues/7191
 // (could not recreate. this was likely fixed prior)
 it('renders events and emits current element in eventDidMount', (done) => {
-  let eventsSetCalled = false
+  let eventDidMountCnt = 0
+  let eventsSetCnt = 0
   let eventEl
 
   const App = {
@@ -123,10 +124,11 @@ it('renders events and emits current element in eventDidMount', (done) => {
     methods: {
       handleEventDidMount(arg) {
         eventEl = arg.el
+        eventDidMountCnt++
       },
       handleEvents(events) {
-        eventsSetCalled = true
         this.currentEvents = events
+        eventsSetCnt++
       }
     },
     render(createElement) {
@@ -139,10 +141,10 @@ it('renders events and emits current element in eventDidMount', (done) => {
   }
 
   mount(App)
-  expect(eventsSetCalled).toBe(true)
-  expect(eventEl.offsetWidth).toBeGreaterThan(0) // in the DOM?
 
   setTimeout(() => {
+    expect(eventDidMountCnt).toBe(1)
+    expect(eventsSetCnt).toBe(1)
     expect(eventEl.offsetWidth).toBeGreaterThan(0) // in the DOM?
     done()
   }, 100)
