@@ -6,8 +6,9 @@ import resourceTimelinePlugin from '@fullcalendar/resource-timeline'
 import Vue from 'vue'
 
 
+const INITIAL_DATE = '2019-05-15'
 const DEFAULT_OPTIONS = {
-  initialDate: '2019-05-15',
+  initialDate: INITIAL_DATE,
   initialView: 'dayGridMonth',
   timeZone: 'UTC',
   plugins: [dayGridPlugin, interactionPlugin],
@@ -314,6 +315,47 @@ it('avoids rerendering unchanged toolbar/events', async () => {
   expect(eventRenderCnt).toBe(0)
 })
 
+// event rendering
+
+;['auto', 'background'].forEach((eventDisplay) => {
+  it(`during ${eventDisplay} custom event rendering, receives el`, async () => {
+    let eventDidMountCalled = false
+
+    mount({
+      components: {
+        FullCalendar
+      },
+      template: `
+        <FullCalendar :options='calendarOptions'>
+          <template #eventContent='arg'>
+            <i>{{ arg.event.title }}</i>
+          </template>
+        </FullCalendar>
+      `,
+      data() {
+        return {
+          calendarOptions: {
+            ...DEFAULT_OPTIONS,
+            events: [
+              {
+                title: 'Event 1',
+                start: INITIAL_DATE,
+                display: eventDisplay,
+              },
+            ],
+            eventDidMount: (eventInfo) => {
+              expect(eventInfo.el).toBeTruthy()
+              eventDidMountCalled = true
+            }
+          }
+        }
+      }
+    })
+
+    await Vue.nextTick()
+    expect(eventDidMountCalled).toBe(true)
+  })
+})
 
 // event reactivity
 

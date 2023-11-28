@@ -27,6 +27,7 @@ const FullCalendar = Vue.extend({
         ...suppliedOptions,
         customRenderingMetaMap: kebabToCamelKeys(this.$scopedSlots),
         handleCustomRendering: getSecret(this).handleCustomRendering,
+        customRenderingReplaces: true,
       }
     },
   },
